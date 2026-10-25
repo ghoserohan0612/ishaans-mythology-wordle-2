@@ -1,0 +1,1238 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#11172b"><title>Ishaan's Mythology Wordle — Volume II</title>
+<style>
+:root{--bg:#101728;--card:#1b2842;--tile:#111b31;--text:#fcf6e8;--muted:#c5d0e5;--gold:#ffd66d;--green:#438960;--yellow:#b78a28;--grey:#46546c;--line:#7081a0}*{box-sizing:border-box}body{margin:0;background:linear-gradient(165deg,#2e375c,#121b30 38%,#101728);min-height:100vh;color:var(--text);font:16px/1.45 system-ui,-apple-system,Arial,sans-serif}.wrap{max-width:820px;margin:auto;padding:16px 12px 48px}.hero{text-align:center;padding:12px 0 6px}h1{font-family:Georgia,serif;color:var(--gold);font-size:clamp(30px,6vw,47px);line-height:1.12;margin:4px 0 8px}.hero p{color:var(--muted);margin:5px 0 12px}.card{background:#1a2742f5;border:1px solid #405073;border-radius:17px;padding:18px;margin:12px 0}.center{text-align:center}.sigils{font-size:36px;letter-spacing:3px}button{appearance:none;border:0;border-radius:11px;background:var(--gold);color:#192136;font-weight:800;font-size:16px;min-height:46px;padding:10px 16px;cursor:pointer;touch-action:manipulation}button:disabled{opacity:.5;cursor:default}button.secondary{background:#415475;color:#fff}button.danger{background:#734651;color:#fff}.buttons{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin:12px 0}.rules{color:var(--muted);max-width:580px;margin:16px auto;text-align:left}.hidden{display:none!important}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.stat{text-align:center;background:#111b32;border-radius:11px;padding:10px 4px}.stat small{display:block;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.04em}.stat strong{color:var(--gold);display:block;font-size:clamp(14px,3vw,22px)}.progress{background:#10182b;border-radius:20px;height:9px;overflow:hidden;margin-top:12px}.progress span{display:block;background:var(--gold);height:100%;width:0}.realm{color:var(--gold);font-weight:900;font-size:14px;letter-spacing:.12em}.clue{font:clamp(18px,3vw,24px)/1.4 Georgia,serif;margin:8px 0}.dim{color:var(--muted);font-size:13px}.board{margin:20px auto 14px;display:grid;justify-content:center;gap:5px}.boardrow{display:flex;justify-content:center;gap:3px}.tile{width:var(--tile-size);height:var(--tile-size);display:grid;place-items:center;background:var(--tile);border:1.5px solid var(--line);border-radius:5px;font-size:clamp(12px,3vw,20px);font-weight:850}.tile.correct{background:var(--green);border-color:var(--green)}.tile.present{background:var(--yellow);border-color:var(--yellow)}.tile.absent{background:var(--grey);border-color:var(--grey)}.tile.active{border-color:var(--gold)}.keyboard{max-width:620px;margin:14px auto;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px}.key{min-width:0;min-height:47px;background:#415273;color:#fff;padding:4px 0;font-size:clamp(11px,2.5vw,17px);border-radius:6px}.key.correct{background:var(--green)}.key.present{background:var(--yellow)}.key.absent{background:var(--grey)}.key.special{grid-column:span 2;background:#63749a;font-size:13px}.msg{min-height:26px;text-align:center;color:var(--gold);font-weight:700}.fact{background:#111d34;border-left:4px solid var(--gold);padding:14px;border-radius:8px;margin-top:12px}.fact strong{color:var(--gold)}.footer-note{text-align:center;font-size:13px;color:var(--muted)}.tally{font-size:14px;color:var(--muted)}.end-rank{font:31px Georgia,serif;color:var(--gold)}@media(max-width:500px){.card{padding:13px}.stats{gap:5px}.key{min-height:44px}.wrap{padding-left:8px;padding-right:8px}}
+</style></head><body><main class="wrap"><header class="hero"><div class="sigils">⚡ 🏛️ 🐺 🐍 🪷</div><h1>Ishaan’s Mythology Wordle</h1><p>VOLUME II · 200 NEW MYSTERIES · 5 MYTHOLOGIES</p></header>
+<section class="card center" id="welcome"><h2>Enter the Five Realms</h2><p class="rules">Explore <b>Greek, Norse, Egyptian, Indian and Roman</b> mythology. Read a clue and guess the mystery name. 🟩 Right letter, right place. 🟨 Right letter, different place. ⬜ Not in the answer. You have <b>six guesses</b> and two extra clues for every mystery. Some answers are gods; others are heroes, creatures, legendary places or powerful objects. Answers use English letters without spaces or accents.</p><p id="resumeText" class="tally"></p><div class="buttons"><button id="startBtn" type="button">⚔️ Begin Quest II</button><button id="restartBtn" type="button" class="secondary hidden">Start over</button></div><p class="dim">Progress saves automatically on this iPad, in this browser.</p></section>
+<section id="game" class="hidden"><div class="card"><div class="stats"><div class="stat"><small>MYSTERY</small><strong id="number">1 / 200</strong></div><div class="stat"><small>POINTS</small><strong id="points">0</strong></div><div class="stat"><small>STREAK</small><strong id="streak">0</strong></div><div class="stat"><small>RANK</small><strong id="rank">Mortal</strong></div></div><div class="progress"><span id="bar"></span></div></div><div class="card"><div class="realm" id="realm"></div><div class="clue" id="clue"></div><div class="dim" id="length"></div><div id="board" class="board" aria-label="Wordle board"></div><div id="message" class="msg" role="status" aria-live="polite"></div><div id="keyboard" class="keyboard" aria-label="Letter keyboard"></div><div class="buttons" id="helps"><button type="button" class="secondary" id="hintBtn">🔮 Extra clue</button><button type="button" class="danger" id="revealBtn">Reveal answer</button></div><div id="fact" class="fact hidden"></div><div id="nextControls" class="buttons hidden"><button type="button" id="nextBtn">Next mystery →</button></div><p class="footer-note">Your quest will resume here when you come back.</p></div></section>
+<section id="finish" class="card center hidden"><div style="font-size:55px">🏆</div><h2>All 200 Mysteries Complete!</h2><div class="end-rank" id="finalRank"></div><p id="finalScore"></p><div class="buttons"><button id="playAgain" type="button">Start a new quest</button></div></section></main>
+<script>
+'use strict';
+const PUZZLES=[
+  {
+    "realm": "Greek",
+    "answer": "HESTIA",
+    "clue": "I watch over the sacred fire of the home.",
+    "fact": "Goddess of the hearth, Hestia was honoured at household and civic fires."
+  },
+  {
+    "realm": "Norse",
+    "answer": "SIF",
+    "clue": "Golden hair grows upon my head, thanks to clever dwarfs.",
+    "fact": "Sif is a goddess, Thor's wife, famed for her golden hair."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "ATUM",
+    "clue": "At the first creation I emerged to begin the family of gods.",
+    "fact": "Atum is a creator deity in the Heliopolitan tradition."
+  },
+  {
+    "realm": "Indian",
+    "answer": "GANGA",
+    "clue": "I descend from heaven and flow as a sacred river.",
+    "fact": "Ganga is the personification of the Ganges river and a revered goddess."
+  },
+  {
+    "realm": "Roman",
+    "answer": "JUPITER",
+    "clue": "My eagle and thunderbolt mark the king of the Roman gods.",
+    "fact": "Jupiter was the chief Roman god of sky and thunder."
+  },
+  {
+    "realm": "Greek",
+    "answer": "EROS",
+    "clue": "My arrows can make even a god fall in love.",
+    "fact": "Eros personifies desire and love in Greek traditions."
+  },
+  {
+    "realm": "Norse",
+    "answer": "BRAGI",
+    "clue": "A skald might pray to me before reciting a poem.",
+    "fact": "Bragi is a god associated with poetry."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "SHU",
+    "clue": "I stand between sky and earth as the air.",
+    "fact": "Shu is the god of air who separates sky and earth."
+  },
+  {
+    "realm": "Indian",
+    "answer": "YAMUNA",
+    "clue": "I am a sacred river often linked with Krishna's childhood.",
+    "fact": "Yamuna is a revered river goddess in Hindu traditions."
+  },
+  {
+    "realm": "Roman",
+    "answer": "JUNO",
+    "clue": "I protect marriage and stand as queen of the Roman gods.",
+    "fact": "Juno was queen of the gods and patron of marriage."
+  },
+  {
+    "realm": "Greek",
+    "answer": "NIKE",
+    "clue": "Victorious athletes might wish for my wings.",
+    "fact": "Nike is the winged Greek goddess of victory."
+  },
+  {
+    "realm": "Norse",
+    "answer": "ULLR",
+    "clue": "A skier and archer might favour my name.",
+    "fact": "Ullr is associated with skiing, archery and winter sports."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "TEFNUT",
+    "clue": "Moisture and the first divine family are linked to me.",
+    "fact": "Tefnut is a goddess associated with moisture and a member of the Ennead."
+  },
+  {
+    "realm": "Indian",
+    "answer": "USHAS",
+    "clue": "I am the dawn praised in ancient Vedic hymns.",
+    "fact": "Ushas is the Vedic goddess of dawn."
+  },
+  {
+    "realm": "Roman",
+    "answer": "NEPTUNE",
+    "clue": "My trident rules the seas for the Romans.",
+    "fact": "Neptune was the Roman god of the sea."
+  },
+  {
+    "realm": "Greek",
+    "answer": "HEBE",
+    "clue": "On Olympus I served the gods a drink of immortality.",
+    "fact": "Hebe is the goddess of youth and was a cupbearer of the gods."
+  },
+  {
+    "realm": "Norse",
+    "answer": "FORSETI",
+    "clue": "Arguments are settled in my hall of justice.",
+    "fact": "Forseti is associated with justice and reconciliation."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "NEITH",
+    "clue": "I am an ancient goddess linked with weaving and war.",
+    "fact": "Neith was worshipped at Sais and associated with weaving and warfare."
+  },
+  {
+    "realm": "Indian",
+    "answer": "SOMA",
+    "clue": "I am both a Vedic deity and a sacred ritual drink.",
+    "fact": "Soma is a Vedic deity associated with the ritual soma plant and drink."
+  },
+  {
+    "realm": "Roman",
+    "answer": "PLUTO",
+    "clue": "I rule the realm beneath the ground and the dead.",
+    "fact": "Pluto is a Roman god of the underworld and its riches."
+  },
+  {
+    "realm": "Greek",
+    "answer": "IRIS",
+    "clue": "I travel on rainbows carrying divine messages.",
+    "fact": "Iris is a rainbow goddess and messenger of the gods."
+  },
+  {
+    "realm": "Norse",
+    "answer": "EIR",
+    "clue": "I bring skill and help to those who need healing.",
+    "fact": "Eir is associated with healing in Norse sources."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "SERKET",
+    "clue": "My scorpion guards against venom and danger.",
+    "fact": "Serket is a scorpion goddess associated with protection and healing."
+  },
+  {
+    "realm": "Indian",
+    "answer": "ASHVINS",
+    "clue": "We are divine twin horsemen who help and heal.",
+    "fact": "The Ashvins are twin Vedic deities associated with healing and rescue."
+  },
+  {
+    "realm": "Roman",
+    "answer": "MARS",
+    "clue": "I am Rome's war god and father of its legendary founders.",
+    "fact": "Mars was a major Roman war god and father of Romulus and Remus."
+  },
+  {
+    "realm": "Greek",
+    "answer": "EOS",
+    "clue": "I open the gates of morning with rosy fingers.",
+    "fact": "Eos personifies the dawn in Greek mythology."
+  },
+  {
+    "realm": "Norse",
+    "answer": "RAN",
+    "clue": "My net can pull sailors down into the sea.",
+    "fact": "Rán is a sea goddess who gathers the drowned with a net."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "SESHAT",
+    "clue": "I count, write and measure sacred buildings.",
+    "fact": "Seshat is goddess of record-keeping, writing and measurement."
+  },
+  {
+    "realm": "Indian",
+    "answer": "RUDRA",
+    "clue": "My fierce name appears in ancient Vedic hymns.",
+    "fact": "Rudra is a Vedic deity often associated with storms and later linked to Shiva."
+  },
+  {
+    "realm": "Roman",
+    "answer": "VENUS",
+    "clue": "Love and beauty are mine, and Romans traced a famous ancestry through me.",
+    "fact": "Venus was goddess of love and mythical ancestress of the Roman people."
+  },
+  {
+    "realm": "Greek",
+    "answer": "SELENE",
+    "clue": "At night I ride my shining chariot across the sky.",
+    "fact": "Selene is the personification of the Moon."
+  },
+  {
+    "realm": "Norse",
+    "answer": "AEGIR",
+    "clue": "The gods sometimes feast in my underwater halls.",
+    "fact": "Ægir is a sea-associated figure who hosts divine feasts."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "HAPI",
+    "clue": "The Nile's nourishing annual flood is my special gift.",
+    "fact": "Hapi personifies the Nile's inundation."
+  },
+  {
+    "realm": "Indian",
+    "answer": "PRITHVI",
+    "clue": "I am Mother Earth in Vedic tradition.",
+    "fact": "Prithvi is the Vedic personification of the Earth."
+  },
+  {
+    "realm": "Roman",
+    "answer": "MERCURY",
+    "clue": "Winged shoes help me carry messages for the Romans.",
+    "fact": "Mercury was the Roman messenger god, linked to trade and travel."
+  },
+  {
+    "realm": "Greek",
+    "answer": "HELIOS",
+    "clue": "From my chariot I see nearly everything on Earth.",
+    "fact": "Helios is the ancient Greek personification of the Sun."
+  },
+  {
+    "realm": "Norse",
+    "answer": "SIGYN",
+    "clue": "I held a bowl to catch poison dripping onto my husband.",
+    "fact": "Sigyn is Loki's loyal wife in the tale of his punishment."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "MIN",
+    "clue": "I am an ancient god of fertility and growth.",
+    "fact": "Min was an Egyptian deity associated with fertility."
+  },
+  {
+    "realm": "Indian",
+    "answer": "ADITI",
+    "clue": "I am a boundless mother of divine beings.",
+    "fact": "Aditi is a Vedic mother goddess associated with the Adityas."
+  },
+  {
+    "realm": "Roman",
+    "answer": "MINERVA",
+    "clue": "Wisdom, crafts and strategic skill are my gifts.",
+    "fact": "Minerva was Roman goddess of wisdom and arts."
+  },
+  {
+    "realm": "Greek",
+    "answer": "NYX",
+    "clue": "Even mighty gods respected the power of night.",
+    "fact": "Nyx is the primordial personification of night."
+  },
+  {
+    "realm": "Norse",
+    "answer": "ANGRBODA",
+    "clue": "A monstrous wolf and serpent count among my children.",
+    "fact": "Angrboda is a giantess associated with Loki and his monstrous offspring."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "MONTU",
+    "clue": "I am a falcon-headed warrior god.",
+    "fact": "Montu is a god of war, especially important near Thebes."
+  },
+  {
+    "realm": "Indian",
+    "answer": "DITI",
+    "clue": "Some powerful beings called Daityas descend from me.",
+    "fact": "Diti is an ancestral mother of the Daityas in Hindu mythology."
+  },
+  {
+    "realm": "Roman",
+    "answer": "DIANA",
+    "clue": "My bow belongs to the hunt and the moon.",
+    "fact": "Diana was goddess of the hunt, wild places and the Moon."
+  },
+  {
+    "realm": "Greek",
+    "answer": "GAIA",
+    "clue": "Mountains, forests and seas all rest upon me.",
+    "fact": "Gaia is the primordial goddess of the Earth."
+  },
+  {
+    "realm": "Norse",
+    "answer": "NANNA",
+    "clue": "I was so overcome by grief that I followed my husband in death.",
+    "fact": "Nanna is the wife of Baldr in Norse accounts."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "KHONSU",
+    "clue": "I travel the night sky as a moon god.",
+    "fact": "Khonsu was a moon god in the Theban divine family."
+  },
+  {
+    "realm": "Indian",
+    "answer": "KASHYAPA",
+    "clue": "I am a sage described as father of many kinds of beings.",
+    "fact": "Kashyapa is a legendary sage and ancestor of many divine and other beings."
+  },
+  {
+    "realm": "Roman",
+    "answer": "VULCAN",
+    "clue": "I work at the divine forge with fire and metal.",
+    "fact": "Vulcan was Roman god of fire and metalworking."
+  },
+  {
+    "realm": "Greek",
+    "answer": "URANUS",
+    "clue": "I am the ancient sky whose children included Titans.",
+    "fact": "Uranus personifies the sky and is a parent of many Titans."
+  },
+  {
+    "realm": "Norse",
+    "answer": "HODR",
+    "clue": "I unknowingly hurled the weapon that killed my brother.",
+    "fact": "Höðr is the blind god implicated in Baldr's death."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "MUT",
+    "clue": "My name means mother, and I am a queenly goddess.",
+    "fact": "Mut is a mother goddess closely associated with Amun."
+  },
+  {
+    "realm": "Indian",
+    "answer": "NARADA",
+    "clue": "I carry a musical instrument while roaming between worlds.",
+    "fact": "Narada is a travelling divine sage often pictured with a vina."
+  },
+  {
+    "realm": "Roman",
+    "answer": "BACCHUS",
+    "clue": "Grapevines, revelry and theatre follow me.",
+    "fact": "Bacchus was a Roman god of wine and ecstatic celebration."
+  },
+  {
+    "realm": "Greek",
+    "answer": "CRONUS",
+    "clue": "I swallowed my children to prevent a prophecy.",
+    "fact": "Cronus was a Titan and father of Zeus and several Olympians."
+  },
+  {
+    "realm": "Norse",
+    "answer": "VALI",
+    "clue": "I grew quickly to avenge a fallen brother.",
+    "fact": "Váli is a son of Odin associated with vengeance for Baldr."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "WADJET",
+    "clue": "My cobra rises to protect the pharaoh's crown.",
+    "fact": "Wadjet is a protective cobra goddess associated with Lower Egypt."
+  },
+  {
+    "realm": "Indian",
+    "answer": "VYASA",
+    "clue": "I am traditionally credited with arranging the Vedas.",
+    "fact": "Vyasa is a sage associated with the Mahabharata and arranging the Vedas."
+  },
+  {
+    "realm": "Roman",
+    "answer": "CERES",
+    "clue": "Without my crops the people of Rome would go hungry.",
+    "fact": "Ceres was Roman goddess of agriculture and grain."
+  },
+  {
+    "realm": "Greek",
+    "answer": "RHEA",
+    "clue": "I hid my youngest child from his hungry father.",
+    "fact": "Rhea rescued baby Zeus from Cronus."
+  },
+  {
+    "realm": "Norse",
+    "answer": "MAGNI",
+    "clue": "As a child I showed strength by moving a giant's leg.",
+    "fact": "Magni is a son of Thor, famed for extraordinary strength."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "NEKHBET",
+    "clue": "As a vulture I guard the kings of Upper Egypt.",
+    "fact": "Nekhbet is a vulture goddess and protector of Upper Egypt."
+  },
+  {
+    "realm": "Indian",
+    "answer": "VALMIKI",
+    "clue": "I am traditionally known as the poet of the Ramayana.",
+    "fact": "Valmiki is revered as the author of the Sanskrit Ramayana."
+  },
+  {
+    "realm": "Roman",
+    "answer": "VESTA",
+    "clue": "A sacred fire burns at the heart of my worship.",
+    "fact": "Vesta was Roman goddess of the hearth and its sacred fire."
+  },
+  {
+    "realm": "Greek",
+    "answer": "THETIS",
+    "clue": "I tried to protect my warrior son from harm.",
+    "fact": "Thetis is a sea nymph and mother of Achilles."
+  },
+  {
+    "realm": "Norse",
+    "answer": "MODI",
+    "clue": "My name means courage or wrath, and Thor is my father.",
+    "fact": "Móði is a son of Thor mentioned in Norse sources."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "ANUKET",
+    "clue": "The river's southern cataracts are linked with me.",
+    "fact": "Anuket is a goddess associated with the Nile's first cataract."
+  },
+  {
+    "realm": "Indian",
+    "answer": "DASHARATHA",
+    "clue": "I ruled Ayodhya and was father of four princes.",
+    "fact": "Dasharatha is Rama's father and king of Ayodhya in the Ramayana."
+  },
+  {
+    "realm": "Roman",
+    "answer": "JANUS",
+    "clue": "I have two faces looking toward beginnings and endings.",
+    "fact": "Janus is a Roman god of doorways, transitions and beginnings."
+  },
+  {
+    "realm": "Greek",
+    "answer": "TRITON",
+    "clue": "I blow a conch shell from beneath the waves.",
+    "fact": "Triton is a sea deity, often shown with a conch trumpet."
+  },
+  {
+    "realm": "Norse",
+    "answer": "THRUD",
+    "clue": "I am the daughter of a thunder god.",
+    "fact": "Þrúðr, or Thrud, is a daughter of Thor and Sif."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "SATET",
+    "clue": "My arrows and the southern Nile's waters are both sacred.",
+    "fact": "Satet was a goddess linked with the Nile's cataracts and protection."
+  },
+  {
+    "realm": "Indian",
+    "answer": "KAUSALYA",
+    "clue": "I am the mother of Prince Rama.",
+    "fact": "Kausalya is Rama's mother in the Ramayana."
+  },
+  {
+    "realm": "Roman",
+    "answer": "SATURN",
+    "clue": "My winter festival was famous for feasting and merriment.",
+    "fact": "Saturn was an ancient Roman deity associated with agriculture and Saturnalia."
+  },
+  {
+    "realm": "Greek",
+    "answer": "NEREUS",
+    "clue": "They call me the Old Man of the Sea.",
+    "fact": "Nereus is a wise sea god and father of the Nereids."
+  },
+  {
+    "realm": "Norse",
+    "answer": "GEFJON",
+    "clue": "I ploughed a great piece of land away to make an island.",
+    "fact": "Gefjon is a goddess linked with the legendary making of Zealand."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "HEQET",
+    "clue": "I am a frog goddess linked with birth.",
+    "fact": "Heqet is associated with childbirth and is represented as a frog."
+  },
+  {
+    "realm": "Indian",
+    "answer": "LAKSHMANA",
+    "clue": "I accompanied my brother into exile for many years.",
+    "fact": "Lakshmana is Rama's loyal brother in the Ramayana."
+  },
+  {
+    "realm": "Roman",
+    "answer": "OPS",
+    "clue": "Abundance and harvest wealth are linked with me.",
+    "fact": "Ops was a Roman goddess of abundance and plenty."
+  },
+  {
+    "realm": "Greek",
+    "answer": "PAN",
+    "clue": "My goat legs and flute belong in the wild hills.",
+    "fact": "Pan is a rustic god associated with shepherds and wild places."
+  },
+  {
+    "realm": "Norse",
+    "answer": "KVASIR",
+    "clue": "I was made from divine spittle and knew almost everything.",
+    "fact": "Kvasir was a wise being whose blood became the mead of poetry."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "MESKHENET",
+    "clue": "I stand beside the moment a baby is born.",
+    "fact": "Meskhenet is a goddess associated with childbirth and destiny."
+  },
+  {
+    "realm": "Indian",
+    "answer": "BHARATA",
+    "clue": "I kept my brother's sandals on the throne in his absence.",
+    "fact": "Bharata is Rama's brother, celebrated for his loyalty."
+  },
+  {
+    "realm": "Roman",
+    "answer": "QUIRINUS",
+    "clue": "Early Rome worshipped me, and I became linked with its founder.",
+    "fact": "Quirinus was an ancient Roman god later associated with Romulus."
+  },
+  {
+    "realm": "Greek",
+    "answer": "MORPHEUS",
+    "clue": "I can take human shapes inside dreams.",
+    "fact": "Morpheus is a figure associated with dreams and forms in later Greek literature."
+  },
+  {
+    "realm": "Norse",
+    "answer": "MIMIR",
+    "clue": "Odin sought wisdom beside my well.",
+    "fact": "Mímir is a being closely tied to wisdom and a famous well."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "RENENUTET",
+    "clue": "I protect harvest stores, often in cobra form.",
+    "fact": "Renenutet is a cobra goddess linked with nourishment and harvest."
+  },
+  {
+    "realm": "Indian",
+    "answer": "SHATRUGHNA",
+    "clue": "I am the youngest of four royal brothers in Ayodhya.",
+    "fact": "Shatrughna is one of the four sons of Dasharatha."
+  },
+  {
+    "realm": "Roman",
+    "answer": "BELLONA",
+    "clue": "I accompany battles as a fearsome Roman goddess.",
+    "fact": "Bellona was a Roman goddess of war."
+  },
+  {
+    "realm": "Greek",
+    "answer": "HYPNOS",
+    "clue": "Close your eyes and you will enter my kingdom.",
+    "fact": "Hypnos personifies sleep."
+  },
+  {
+    "realm": "Norse",
+    "answer": "SURTR",
+    "clue": "At the world's end I march with a flaming sword.",
+    "fact": "Surtr is a fire giant connected with the destruction at Ragnarök."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "SHESMU",
+    "clue": "My workshops press oils and wine for gods.",
+    "fact": "Shesmu is a deity associated with perfume, oil and wine presses."
+  },
+  {
+    "realm": "Indian",
+    "answer": "SUGRIVA",
+    "clue": "With a monkey army I helped search for a stolen queen.",
+    "fact": "Sugriva is an ally of Rama and a king of the vanaras."
+  },
+  {
+    "realm": "Roman",
+    "answer": "FLORA",
+    "clue": "Spring flowers and blossoms are my speciality.",
+    "fact": "Flora was the Roman goddess of flowers and blooming."
+  },
+  {
+    "realm": "Greek",
+    "answer": "THANATOS",
+    "clue": "I am the quiet personification of death.",
+    "fact": "Thanatos personifies death in Greek mythology."
+  },
+  {
+    "realm": "Norse",
+    "answer": "YMIR",
+    "clue": "My body became the materials of the world.",
+    "fact": "Ymir is a primordial giant whose body was used to shape the cosmos."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "MAFDET",
+    "clue": "A swift feline defender strikes dangerous snakes.",
+    "fact": "Mafdet is an early protective feline goddess."
+  },
+  {
+    "realm": "Indian",
+    "answer": "BALI",
+    "clue": "I was an immensely powerful vanara king and Sugriva's brother.",
+    "fact": "Vali, also called Bali, is a vanara king in the Ramayana."
+  },
+  {
+    "realm": "Roman",
+    "answer": "POMONA",
+    "clue": "Fruit trees and orchards are under my protection.",
+    "fact": "Pomona was a Roman goddess of fruit and orchards."
+  },
+  {
+    "realm": "Greek",
+    "answer": "NEMESIS",
+    "clue": "I arrive when pride and good fortune go too far.",
+    "fact": "Nemesis is a goddess associated with retribution and balance."
+  },
+  {
+    "realm": "Norse",
+    "answer": "AUDHUMLA",
+    "clue": "I am the primeval cow who licked a god's ancestor from ice.",
+    "fact": "Auðhumla is the cosmic cow of the Norse creation story."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "BABI",
+    "clue": "A powerful baboon deity with a fierce side.",
+    "fact": "Babi is a baboon deity associated with strength and danger."
+  },
+  {
+    "realm": "Indian",
+    "answer": "ANGADA",
+    "clue": "My father was a mighty vanara king, and I became Rama's messenger.",
+    "fact": "Angada is Vali's son and an envoy in the Ramayana."
+  },
+  {
+    "realm": "Roman",
+    "answer": "FAUNUS",
+    "clue": "Forests, flocks and rustic prophecy are mine.",
+    "fact": "Faunus was a Roman rustic deity of woods and herds."
+  },
+  {
+    "realm": "Greek",
+    "answer": "HARMONIA",
+    "clue": "My name means agreement and fitting together.",
+    "fact": "Harmonia is the goddess of harmony and concord."
+  },
+  {
+    "realm": "Norse",
+    "answer": "BURI",
+    "clue": "A cosmic cow licked me out of the icy rime.",
+    "fact": "Búri is an ancestor of the gods revealed from ice."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "BENNU",
+    "clue": "My sacred bird is connected to rebirth and the rising sun.",
+    "fact": "Bennu is a bird symbol of creation and renewal."
+  },
+  {
+    "realm": "Indian",
+    "answer": "JAMBAVAN",
+    "clue": "I am the wise bear elder who encouraged a famous leap.",
+    "fact": "Jambavan is a wise bear-like hero who encourages Hanuman in the Ramayana."
+  },
+  {
+    "realm": "Roman",
+    "answer": "SILVANUS",
+    "clue": "I watch over woodlands and field boundaries.",
+    "fact": "Silvanus was a Roman god associated with woods and rural lands."
+  },
+  {
+    "realm": "Greek",
+    "answer": "ASCLEPIUS",
+    "clue": "My healing staff has a single serpent.",
+    "fact": "Asclepius is a god of medicine and healing."
+  },
+  {
+    "realm": "Norse",
+    "answer": "BORR",
+    "clue": "I am Odin's father.",
+    "fact": "Borr is the father of Odin, Vili and Vé."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "AKHET",
+    "clue": "My name describes the horizon where the sun rises.",
+    "fact": "Akhet means horizon and is a key concept in Egyptian cosmology."
+  },
+  {
+    "realm": "Indian",
+    "answer": "VIBHISHANA",
+    "clue": "I chose to support what was right rather than my brother's plans.",
+    "fact": "Vibhishana is Ravana's brother who sides with Rama."
+  },
+  {
+    "realm": "Roman",
+    "answer": "TERMINUS",
+    "clue": "Boundary stones are sacred to me.",
+    "fact": "Terminus was the Roman god protecting boundaries."
+  },
+  {
+    "realm": "Greek",
+    "answer": "CHIRON",
+    "clue": "I am a wise centaur who trained many heroes.",
+    "fact": "Chiron is a centaur famed for teaching heroes medicine and other arts."
+  },
+  {
+    "realm": "Norse",
+    "answer": "VILI",
+    "clue": "With two brothers I helped shape the world.",
+    "fact": "Vili is one of Odin's brothers in the creation story."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "ANKH",
+    "clue": "My loop-topped cross symbolises life.",
+    "fact": "The ankh is an ancient Egyptian sign meaning life."
+  },
+  {
+    "realm": "Indian",
+    "answer": "MANDODARI",
+    "clue": "I was queen of Lanka and warned my husband against wrongdoing.",
+    "fact": "Mandodari is Ravana's queen, respected for her wisdom in the Ramayana."
+  },
+  {
+    "realm": "Roman",
+    "answer": "FORTUNA",
+    "clue": "Good or bad luck may arrive when my wheel turns.",
+    "fact": "Fortuna personified luck and fortune in Rome."
+  },
+  {
+    "realm": "Greek",
+    "answer": "ORPHEUS",
+    "clue": "My music nearly persuaded the underworld to release my wife.",
+    "fact": "Orpheus journeyed to the underworld hoping to recover Eurydice."
+  },
+  {
+    "realm": "Norse",
+    "answer": "NIFLHEIM",
+    "clue": "Mist and frost fill this ancient world.",
+    "fact": "Niflheim is a primordial realm associated with mist and cold."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "DJED",
+    "clue": "I am a pillar symbol of steadiness and endurance.",
+    "fact": "The djed pillar symbolises stability and is associated with Osiris."
+  },
+  {
+    "realm": "Indian",
+    "answer": "KUMBHAKARNA",
+    "clue": "My legendary sleep is almost as famous as my enormous size.",
+    "fact": "Kumbhakarna is Ravana's giant brother known for long periods of sleep."
+  },
+  {
+    "realm": "Roman",
+    "answer": "VICTORIA",
+    "clue": "Roman victories may be crowned by my wings.",
+    "fact": "Victoria was the Roman goddess of victory."
+  },
+  {
+    "realm": "Greek",
+    "answer": "EURYDICE",
+    "clue": "My husband descended into the underworld for me.",
+    "fact": "Eurydice was the wife Orpheus tried to bring back from the dead."
+  },
+  {
+    "realm": "Norse",
+    "answer": "MUSPELHEIM",
+    "clue": "Fire and fiery beings belong to my realm.",
+    "fact": "Muspelheim is a fiery world associated with Surtr."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "WAS",
+    "clue": "I am a long staff meaning power and dominion.",
+    "fact": "The was-sceptre is a symbol of authority carried by deities."
+  },
+  {
+    "realm": "Indian",
+    "answer": "MEGHANADA",
+    "clue": "I am Ravana's son, also called Indrajit.",
+    "fact": "Meghanada, or Indrajit, is a formidable warrior in the Ramayana."
+  },
+  {
+    "realm": "Roman",
+    "answer": "CONCORDIA",
+    "clue": "Peaceful agreement among citizens is my wish.",
+    "fact": "Concordia personified harmony and concord in Roman religion."
+  },
+  {
+    "realm": "Greek",
+    "answer": "ARIADNE",
+    "clue": "A ball of thread helped a hero escape a maze.",
+    "fact": "Ariadne gave Theseus the thread used in the Labyrinth."
+  },
+  {
+    "realm": "Norse",
+    "answer": "JOTUNHEIM",
+    "clue": "The giants call me their homeland.",
+    "fact": "Jotunheim is the realm of the jötnar or giants."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "URAEUS",
+    "clue": "I am the rearing protective cobra on royal headgear.",
+    "fact": "The uraeus is a cobra emblem symbolising royal protection."
+  },
+  {
+    "realm": "Indian",
+    "answer": "DRAUPADI",
+    "clue": "Five Pandava brothers became my husbands.",
+    "fact": "Draupadi is a central heroine of the Mahabharata."
+  },
+  {
+    "realm": "Roman",
+    "answer": "FIDES",
+    "clue": "Promises and trust are under my protection.",
+    "fact": "Fides personified good faith and trust."
+  },
+  {
+    "realm": "Greek",
+    "answer": "DAEDALUS",
+    "clue": "I built a maze and made wings from feathers and wax.",
+    "fact": "Daedalus was a master inventor and father of Icarus."
+  },
+  {
+    "realm": "Norse",
+    "answer": "ALFHEIM",
+    "clue": "Light elves are linked with my world.",
+    "fact": "Alfheim is a realm associated with the elves."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "CROOK",
+    "clue": "A shepherd's tool became a royal emblem of rule.",
+    "fact": "The crook is one of the traditional regalia of Egyptian kingship."
+  },
+  {
+    "realm": "Indian",
+    "answer": "YUDHISHTHIRA",
+    "clue": "Truth and duty guide this eldest Pandava.",
+    "fact": "Yudhishthira is the eldest Pandava, associated with dharma."
+  },
+  {
+    "realm": "Roman",
+    "answer": "PIETAS",
+    "clue": "Doing your duty to family and gods is my virtue.",
+    "fact": "Pietas personified duty and devoted respect."
+  },
+  {
+    "realm": "Greek",
+    "answer": "TANTALUS",
+    "clue": "Food and drink stay just out of my reach forever.",
+    "fact": "Tantalus was punished with eternal hunger and thirst."
+  },
+  {
+    "realm": "Norse",
+    "answer": "VANAHEIM",
+    "clue": "I am the home realm of the Vanir gods.",
+    "fact": "Vanaheim is the mythological home of the Vanir."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "FLAIL",
+    "clue": "Kings hold me crossed with a crook.",
+    "fact": "The flail is a traditional royal emblem paired with the crook."
+  },
+  {
+    "realm": "Indian",
+    "answer": "NAKULA",
+    "clue": "I am one of the twin Pandava brothers, famed for horsemanship.",
+    "fact": "Nakula is a Pandava twin known for skill with horses."
+  },
+  {
+    "realm": "Roman",
+    "answer": "LIBERTAS",
+    "clue": "I personify freedom in Rome.",
+    "fact": "Libertas was the Roman personification of liberty."
+  },
+  {
+    "realm": "Greek",
+    "answer": "SISYPHUS",
+    "clue": "My rock rolls downhill whenever I reach the top.",
+    "fact": "Sisyphus was condemned to push a boulder uphill forever."
+  },
+  {
+    "realm": "Norse",
+    "answer": "FOLKVANGR",
+    "clue": "Freyja welcomes some fallen warriors to my field.",
+    "fact": "Fólkvangr is the field associated with Freyja and the battle-slain."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "CANOPIC",
+    "clue": "This sort of jar protected organs in burial traditions.",
+    "fact": "Canopic jars preserved or symbolically housed organs in ancient Egyptian funerals."
+  },
+  {
+    "realm": "Indian",
+    "answer": "SAHADEVA",
+    "clue": "I am the youngest Pandava twin and known for wisdom.",
+    "fact": "Sahadeva is Nakula's twin and one of the Pandavas."
+  },
+  {
+    "realm": "Roman",
+    "answer": "SPES",
+    "clue": "I am hope itself in Roman religion.",
+    "fact": "Spes personified hope."
+  },
+  {
+    "realm": "Greek",
+    "answer": "ECHO",
+    "clue": "After a curse I could only repeat others' words.",
+    "fact": "Echo was a nymph whose speech was limited to repetition."
+  },
+  {
+    "realm": "Norse",
+    "answer": "GJALLARHORN",
+    "clue": "My blast announces the coming of the last battle.",
+    "fact": "Gjallarhorn is Heimdall's sounding horn."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "USHABTI",
+    "clue": "A tiny servant figure may help me in the afterlife.",
+    "fact": "Ushabti figurines were placed in tombs to serve the dead."
+  },
+  {
+    "realm": "Indian",
+    "answer": "KARNA",
+    "clue": "I was born with divine armour and became a great archer.",
+    "fact": "Karna is a major warrior in the Mahabharata, born with celestial armour."
+  },
+  {
+    "realm": "Roman",
+    "answer": "SALUS",
+    "clue": "Health and public well-being are my concerns.",
+    "fact": "Salus was a goddess of welfare and health."
+  },
+  {
+    "realm": "Greek",
+    "answer": "NARCISSUS",
+    "clue": "I fell in love with a face reflected in water.",
+    "fact": "Narcissus became obsessed with his own reflection."
+  },
+  {
+    "realm": "Norse",
+    "answer": "GLEIPNIR",
+    "clue": "I look like a ribbon but can bind a giant wolf.",
+    "fact": "Gleipnir is the magical binding used to restrain Fenrir."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "PYRAMID",
+    "clue": "My triangular sides guard a royal tomb.",
+    "fact": "Pyramids were monumental tombs for some ancient Egyptian rulers."
+  },
+  {
+    "realm": "Indian",
+    "answer": "KUNTI",
+    "clue": "I am mother of three Pandavas and secretly of another great warrior.",
+    "fact": "Kunti is mother of Yudhishthira, Bhima, Arjuna and Karna."
+  },
+  {
+    "realm": "Roman",
+    "answer": "PAX",
+    "clue": "My name means peace in Latin.",
+    "fact": "Pax was the Roman personification of peace."
+  },
+  {
+    "realm": "Greek",
+    "answer": "CASSANDRA",
+    "clue": "I predicted disaster, but nobody believed me.",
+    "fact": "Cassandra received true prophecy but was cursed not to be believed."
+  },
+  {
+    "realm": "Norse",
+    "answer": "DRAUPNIR",
+    "clue": "Every ninth night I produce eight more golden rings.",
+    "fact": "Draupnir is Odin's multiplying gold ring."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "SAQQARA",
+    "clue": "An early step pyramid stands at my necropolis.",
+    "fact": "Saqqara is a vast Egyptian burial site containing Djoser's Step Pyramid."
+  },
+  {
+    "realm": "Indian",
+    "answer": "GANDHARI",
+    "clue": "I chose a blindfold and was mother to the Kauravas.",
+    "fact": "Gandhari is the mother of the Kauravas in the Mahabharata."
+  },
+  {
+    "realm": "Roman",
+    "answer": "LUNA",
+    "clue": "I am the Roman Moon goddess.",
+    "fact": "Luna was a Roman personification of the Moon."
+  },
+  {
+    "realm": "Greek",
+    "answer": "ANDROMEDA",
+    "clue": "A hero rescued me from a sea monster.",
+    "fact": "Andromeda was saved from a sea monster by Perseus."
+  },
+  {
+    "realm": "Norse",
+    "answer": "GUNGNIR",
+    "clue": "I am Odin's special spear.",
+    "fact": "Gungnir is the famous spear carried by Odin."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "GIZA",
+    "clue": "Three famous royal pyramids stand on my plateau.",
+    "fact": "Giza is home to the best-known Old Kingdom royal pyramids."
+  },
+  {
+    "realm": "Indian",
+    "answer": "DURYODHANA",
+    "clue": "I led the Kauravas against my cousins.",
+    "fact": "Duryodhana is the eldest Kaurava and rival of the Pandavas."
+  },
+  {
+    "realm": "Roman",
+    "answer": "SOL",
+    "clue": "My name is Latin for the Sun.",
+    "fact": "Sol was the Roman sun god."
+  },
+  {
+    "realm": "Greek",
+    "answer": "BELLEROPHON",
+    "clue": "I rode a winged horse to battle the Chimera.",
+    "fact": "Bellerophon defeated the Chimera with help from Pegasus."
+  },
+  {
+    "realm": "Norse",
+    "answer": "SKIDBLADNIR",
+    "clue": "I am a folding ship that always has a favourable wind.",
+    "fact": "Skidbladnir is Freyr's magical ship."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "KARNAK",
+    "clue": "My temple complex grew for centuries near Thebes.",
+    "fact": "Karnak is a major ancient temple complex in Luxor."
+  },
+  {
+    "realm": "Indian",
+    "answer": "DUSHASANA",
+    "clue": "I am a brother of Duryodhana in the great epic.",
+    "fact": "Dushasana is a Kaurava prince in the Mahabharata."
+  },
+  {
+    "realm": "Roman",
+    "answer": "AURORA",
+    "clue": "My rosy light announces daybreak.",
+    "fact": "Aurora was Roman goddess of the dawn."
+  },
+  {
+    "realm": "Greek",
+    "answer": "CHIMERA",
+    "clue": "Part lion, part goat, part serpent: beware my fire.",
+    "fact": "The Chimera is a composite, fire-breathing monster."
+  },
+  {
+    "realm": "Norse",
+    "answer": "NAGLFAR",
+    "clue": "I am a frightening ship made from dead people's nails.",
+    "fact": "Naglfar is the ship associated with Ragnarök."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "LUXOR",
+    "clue": "An ancient temple and a modern city share my name.",
+    "fact": "Luxor is a city on the site of ancient Thebes with a famous temple."
+  },
+  {
+    "realm": "Indian",
+    "answer": "BHISHMA",
+    "clue": "My fearsome vow earned me a special name.",
+    "fact": "Bhishma is the elder of the Kuru dynasty famous for his vow of celibacy."
+  },
+  {
+    "realm": "Roman",
+    "answer": "CUPID",
+    "clue": "My tiny arrows can cause enormous romance.",
+    "fact": "Cupid was the Roman god of desire and love."
+  },
+  {
+    "realm": "Greek",
+    "answer": "HYDRA",
+    "clue": "Cut off one of my heads and more may grow.",
+    "fact": "The Lernaean Hydra was a many-headed serpent killed by Heracles."
+  },
+  {
+    "realm": "Norse",
+    "answer": "HUGINN",
+    "clue": "I am one of Odin's ravens; my name means thought.",
+    "fact": "Huginn is Odin's raven representing thought."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "ABYDOS",
+    "clue": "Pilgrims honoured Osiris at my sacred city.",
+    "fact": "Abydos was a major cult centre of Osiris."
+  },
+  {
+    "realm": "Indian",
+    "answer": "DRONA",
+    "clue": "I taught weapons to both sets of rival princes.",
+    "fact": "Drona taught the Pandavas and Kauravas martial skills."
+  },
+  {
+    "realm": "Roman",
+    "answer": "PROSERPINA",
+    "clue": "I spend part of my story in the underworld.",
+    "fact": "Proserpina was a Roman underworld goddess linked with seasonal cycles."
+  },
+  {
+    "realm": "Greek",
+    "answer": "GORGON",
+    "clue": "My terrifying sisters and I can turn onlookers to stone.",
+    "fact": "Gorgons are fearsome beings; Medusa is the best known."
+  },
+  {
+    "realm": "Norse",
+    "answer": "MUNINN",
+    "clue": "I am Odin's raven whose name means memory.",
+    "fact": "Muninn is one of Odin's ravens, representing memory."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "MEMPHIS",
+    "clue": "I was an ancient capital near the Nile's delta.",
+    "fact": "Memphis was an important capital of ancient Egypt."
+  },
+  {
+    "realm": "Indian",
+    "answer": "ASHWATTHAMA",
+    "clue": "I am the warrior son of the teacher Drona.",
+    "fact": "Ashwatthama is Drona's son and a warrior in the Mahabharata."
+  },
+  {
+    "realm": "Roman",
+    "answer": "LAR",
+    "clue": "A household might honour me as a guardian spirit.",
+    "fact": "Lares were protective spirits linked with homes and communities; a Lar is one such spirit."
+  },
+  {
+    "realm": "Greek",
+    "answer": "TARTARUS",
+    "clue": "I lie far deeper than the realm of ordinary dead.",
+    "fact": "Tartarus is a deep abyss used as a prison in Greek cosmology."
+  },
+  {
+    "realm": "Norse",
+    "answer": "RATATOSKR",
+    "clue": "I run up and down a world tree carrying insults.",
+    "fact": "Ratatoskr is a squirrel that races along Yggdrasil."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "THEBES",
+    "clue": "Many New Kingdom rulers built temples near me.",
+    "fact": "Thebes was a major religious centre of ancient Egypt, now around Luxor."
+  },
+  {
+    "realm": "Indian",
+    "answer": "ABHIMANYU",
+    "clue": "I was a young warrior who entered the Chakravyuha.",
+    "fact": "Abhimanyu is Arjuna's son, celebrated for bravery in the Kurukshetra war."
+  },
+  {
+    "realm": "Roman",
+    "answer": "PENATES",
+    "clue": "We guard the household pantry and home.",
+    "fact": "Penates were Roman household guardian deities."
+  },
+  {
+    "realm": "Greek",
+    "answer": "AMBROSIA",
+    "clue": "Olympian gods enjoy me as their divine food.",
+    "fact": "Ambrosia is a mythical food or substance of the gods."
+  },
+  {
+    "realm": "Norse",
+    "answer": "NIDHOGG",
+    "clue": "I gnaw at the roots of the world tree.",
+    "fact": "Níðhöggr is a dragon or serpent associated with the roots of Yggdrasil."
+  },
+  {
+    "realm": "Egyptian",
+    "answer": "ROSETTA",
+    "clue": "A famous inscribed stone found near me helped decipher hieroglyphs.",
+    "fact": "The Rosetta Stone, named for a town in Egypt, aided the decipherment of hieroglyphs."
+  },
+  {
+    "realm": "Indian",
+    "answer": "GHATOTKACHA",
+    "clue": "I am Bhima's mighty rakshasa son.",
+    "fact": "Ghatotkacha is Bhima's son, an important ally in the Mahabharata."
+  },
+  {
+    "realm": "Roman",
+    "answer": "ROMULUS",
+    "clue": "My twin and I were raised by a she-wolf in Rome's founding story.",
+    "fact": "Romulus is Rome's legendary founder and brother of Remus."
+  }
+];
+const STORE='ishaan-mythology-wordle-volume-2-v1';
+const $=id=>document.getElementById(id);
+const fresh=()=>({index:0,score:0,streak:0,guesses:[],entry:'',hints:0,done:false,result:'',keyState:{}});
+let state=fresh();
+try{let loaded=JSON.parse(localStorage.getItem(STORE)||'null');if(loaded&&Number.isInteger(loaded.index)&&loaded.index>=0&&loaded.index<=200&&Array.isArray(loaded.guesses)){state={...fresh(),...loaded,entry:'',keyState:loaded.keyState||{}}}}catch(e){}
+const save=()=>{try{localStorage.setItem(STORE,JSON.stringify(state))}catch(e){}};
+function current(){return PUZZLES[state.index]}
+function rank(){let i=state.index;return i>=160?'God of Gods':i>=100?'Demigod':i>=50?'Mythic Hero':i>=15?'Hero':'Mortal'}
+function show(id){['welcome','game','finish'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
+function start(){if(state.index===200){finish();return}show('game');draw();window.scrollTo(0,0)}
+function welcome(){show('welcome');$('startBtn').textContent=state.index||state.guesses.length?'⚔️ Continue Quest II':'⚔️ Begin Quest II';$('resumeText').textContent=state.index?`Ready for mystery ${state.index+1} of 200. Your score: ${state.score}.`:'';$('restartBtn').classList.toggle('hidden',!state.index&&!state.guesses.length)}
+function reset(){if(!confirm('Start all 200 mysteries again? Your current Volume II progress will be erased.'))return;state=fresh();save();start()}
+function finish(){show('finish');$('finalRank').textContent=rank();$('finalScore').textContent=`You explored 200 mysteries and earned ${state.score} points!`;save()}
+function evaluate(guess,answer){const marks=Array(answer.length).fill('absent'),count={};for(let i=0;i<answer.length;i++){if(guess[i]===answer[i])marks[i]='correct';else count[answer[i]]=(count[answer[i]]||0)+1}for(let i=0;i<guess.length;i++)if(marks[i]!=='correct'&&count[guess[i]]>0){marks[i]='present';count[guess[i]]--}return marks}
+function consumeLetter(ch){if(state.done||state.index>=200)return;const a=current().answer;if(ch==='ENTER'){submit();return}if(ch==='BACK'){state.entry=state.entry.slice(0,-1)}else if(/^[A-Z]$/.test(ch)&&state.entry.length<a.length)state.entry+=ch;drawBoard()}
+function submit(){if(state.done)return;const a=current().answer;if(state.entry.length!==a.length){$('message').textContent=`Please enter ${a.length} letters.`;return}state.guesses.push(state.entry);const win=state.entry===a;state.entry='';if(win){state.done=true;state.result='win';state.streak++;state.score+=Math.max(10,60-(state.guesses.length-1)*8-state.hints*5)}else if(state.guesses.length===6){state.done=true;state.result='lost';state.streak=0}save();draw()}
+function hint(){if(state.done||state.hints>=2)return;state.hints++;save();draw()}
+function reveal(){if(state.done)return;if(!confirm('Reveal the answer and skip this mystery?'))return;state.done=true;state.result='revealed';state.streak=0;save();draw()}
+function advance(){if(!state.done)return;state.index++;state.guesses=[];state.entry='';state.hints=0;state.done=false;state.result='';state.keyState={};save();if(state.index>=200){finish();return}draw();window.scrollTo(0,0)}
+function drawBoard(){const a=current().answer;const n=a.length;const width=Math.min(48,Math.max(20,Math.floor((Math.min(window.innerWidth-58,690)-(n-1)*3)/n)));$('board').style.setProperty('--tile-size',width+'px');const board=$('board');board.replaceChildren();for(let r=0;r<6;r++){let row=document.createElement('div');row.className='boardrow';const value=r<state.guesses.length?state.guesses[r]:r===state.guesses.length&&!state.done?state.entry:'';const marks=r<state.guesses.length?evaluate(value,a):[];for(let c=0;c<n;c++){let tile=document.createElement('span');tile.className='tile '+(marks[c]||((r===state.guesses.length&&c<value.length)?'active':''));tile.textContent=value[c]||'';tile.setAttribute('aria-label',`Row ${r+1} position ${c+1}: ${tile.textContent||'empty'} ${marks[c]||''}`);row.appendChild(tile)}board.appendChild(row)}}
+function drawKeyboard(){const keyboard=$('keyboard');keyboard.replaceChildren();const priority={absent:1,present:2,correct:3};const statuses={};state.guesses.forEach(g=>evaluate(g,current().answer).forEach((status,i)=>{if((priority[status]||0)>(priority[statuses[g[i]]]||0))statuses[g[i]]=status}));for(const ch of 'QWERTYUIOPASDFGHJKLZXCVBNM'){let b=document.createElement('button');b.type='button';b.className='key '+(statuses[ch]||'');b.textContent=ch;b.setAttribute('aria-label','Letter '+ch);b.addEventListener('click',()=>consumeLetter(ch));b.disabled=state.done;keyboard.appendChild(b)}for(const [ch,label] of [['BACK','⌫ Delete'],['ENTER','↵ Enter']]){let b=document.createElement('button');b.type='button';b.className='key special';b.textContent=label;b.disabled=state.done;b.addEventListener('click',()=>consumeLetter(ch));keyboard.appendChild(b)}}
+function draw(){if(state.index>=200){finish();return}let p=current();$('number').textContent=`${state.index+1} / 200`;$('points').textContent=state.score;$('streak').textContent=state.streak;$('rank').textContent=rank();$('bar').style.width=(state.index/200*100)+'%';$('realm').textContent=({Greek:'🏛️',Norse:'🐺',Egyptian:'🐍',Indian:'🪷',Roman:'🦅'})[p.realm]+' '+p.realm.toUpperCase()+' MYTHOLOGY';$('clue').textContent=p.clue;$('length').textContent=`${p.answer.length} letters · ${6-state.guesses.length} guesses remaining`;const hints=[];if(state.hints>=1)hints.push(`Hint 1: The name starts with ${p.answer[0]}.`);if(state.hints>=2)hints.push(`Hint 2: It ends with ${p.answer[p.answer.length-1]} and contains ${new Set(p.answer).size} different letters.`);$('message').textContent=state.done?(state.result==='win'?'🎉 Brilliant! You solved it!':state.result==='lost'?'The six guesses are finished.':'Answer revealed — onwards to the next mystery!'):hints.join('  ');$('hintBtn').disabled=state.hints>=2||state.done;$('hintBtn').textContent=state.hints===0?'🔮 Extra clue':state.hints===1?'🔮 One more clue':'No clues left';$('helps').classList.toggle('hidden',state.done);$('nextControls').classList.toggle('hidden',!state.done);$('nextBtn').textContent=state.index===199?'🏆 Finish Quest':'Next mystery →';$('fact').classList.toggle('hidden',!state.done);if(state.done){$('fact').replaceChildren();const b=document.createElement('strong');b.textContent=p.answer+' — Mythology fact';const line=document.createElement('div');line.textContent=p.fact;$('fact').append(b,line)}drawBoard();drawKeyboard()}
+$('startBtn').addEventListener('click',start);$('restartBtn').addEventListener('click',reset);$('playAgain').addEventListener('click',reset);$('hintBtn').addEventListener('click',hint);$('revealBtn').addEventListener('click',reveal);$('nextBtn').addEventListener('click',advance);
+document.addEventListener('keydown',e=>{if($('game').classList.contains('hidden')||e.ctrlKey||e.metaKey||e.altKey||['INPUT','TEXTAREA'].includes(e.target.tagName))return;const key=e.key.toUpperCase();if(/^[A-Z]$/.test(key)){e.preventDefault();consumeLetter(key)}else if(e.key==='Backspace'){e.preventDefault();consumeLetter('BACK')}else if(e.key==='Enter'){e.preventDefault();consumeLetter('ENTER')}});
+window.addEventListener('resize',()=>{if(!$('game').classList.contains('hidden'))drawBoard()});
+welcome();
+</script></body></html>
