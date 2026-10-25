@@ -1,0 +1,1 @@
+# ishaans-mythology-wordle-2
